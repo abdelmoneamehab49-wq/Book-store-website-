@@ -1,15 +1,39 @@
-export default function BookCard({ book }) {
+export default function BookCard({ book, onSelect, isFavorite, onToggleFavorite }) {
   const authors = book.authors.length ? book.authors.join(", ") : "Unknown author";
   const year = book.publishedDate ? book.publishedDate.slice(0, 4) : "";
 
+  function handleFavorite(e) {
+    e.stopPropagation();
+    onToggleFavorite(book);
+  }
+
   return (
-    <article className="book-card">
+    <article
+      className="book-card"
+      onClick={() => onSelect(book)}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onSelect(book);
+        }
+      }}
+    >
       <div className="book-card__cover">
         {book.thumbnail ? (
           <img src={book.thumbnail} alt={`Cover of ${book.title}`} loading="lazy" />
         ) : (
           <div className="book-card__cover-fallback" aria-hidden="true">📖</div>
         )}
+        <button
+          className={`book-card__fav ${isFavorite ? "book-card__fav--active" : ""}`}
+          onClick={handleFavorite}
+          aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
+          title={isFavorite ? "Remove from favorites" : "Add to favorites"}
+        >
+          {isFavorite ? "★" : "☆"}
+        </button>
       </div>
 
       <div className="book-card__body">
@@ -34,16 +58,7 @@ export default function BookCard({ book }) {
           {book.categories[0] && (
             <span className="book-card__tag">{book.categories[0]}</span>
           )}
-          {book.infoLink && (
-            <a
-              className="book-card__link"
-              href={book.infoLink}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              More info ↗
-            </a>
-          )}
+          <span className="book-card__link">View details ↗</span>
         </div>
       </div>
     </article>

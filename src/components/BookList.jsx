@@ -1,6 +1,17 @@
 import BookCard from "./BookCard.jsx";
 
-export default function BookList({ books, loading, error, hasSearched }) {
+export default function BookList({
+  books,
+  loading,
+  error,
+  hasSearched,
+  onSelect,
+  isFavorite,
+  onToggleFavorite,
+  onLoadMore,
+  canLoadMore,
+  loadingMore,
+}) {
   if (loading) {
     return (
       <div className="book-list book-list--loading" aria-busy="true">
@@ -50,10 +61,26 @@ export default function BookList({ books, loading, error, hasSearched }) {
   }
 
   return (
-    <div className="book-list">
-      {books.map((book) => (
-        <BookCard key={book.id} book={book} />
-      ))}
-    </div>
+    <>
+      <div className="book-list">
+        {books.map((book) => (
+          <BookCard
+            key={book.id}
+            book={book}
+            onSelect={onSelect}
+            isFavorite={isFavorite(book.id)}
+            onToggleFavorite={onToggleFavorite}
+          />
+        ))}
+      </div>
+
+      {canLoadMore && (
+        <div className="book-list__more">
+          <button className="load-more" onClick={onLoadMore} disabled={loadingMore}>
+            {loadingMore ? "Loading…" : "Load more results"}
+          </button>
+        </div>
+      )}
+    </>
   );
 }
